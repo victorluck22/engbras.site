@@ -1,0 +1,225 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%; /* Engbras White */
+    --foreground: 224 71.4% 4.1%; /* Dark Blue/Gray for text */
+    --card: 0 0% 100%;
+    --card-foreground: 224 71.4% 4.1%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 71.4% 4.1%;
+    --primary: 25 100% 50%; /* Engbras Orange */
+    --primary-foreground: 0 0% 100%; /* White text on orange */
+    --secondary: 220 14.3% 95.9%; /* Engbras Light Gray - slightly adjusted */
+    --secondary-foreground: 224 71.4% 4.1%;
+    --muted: 220 14.3% 95.9%;
+    --muted-foreground: 220 8.9% 46.1%;
+    --accent: 220 14.3% 95.9%;
+    --accent-foreground: 25 100% 50%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 220 13% 91%; /* Engbras Gray */
+    --input: 220 13% 91%;
+    --ring: 25 100% 50%;
+    --radius: 0.75rem;
+
+    --engbras-orange: 25 100% 50%;
+    --engbras-gray-light: 220 14.3% 95.9%;
+    --engbras-gray: 220 13% 80%; /* Adjusted for better contrast */
+    --engbras-gray-dark: 224 71.4% 4.1%;
+    --engbras-white: 0 0% 100%;
+  }
+
+  .dark {
+    --background: 224 71.4% 4.1%; /* Dark Blue/Gray */
+    --foreground: 210 20% 98%; /* Light Gray/White for text */
+    --card: 224 71.4% 6.1%; /* Slightly lighter dark for cards */
+    --card-foreground: 210 20% 98%;
+    --popover: 224 71.4% 4.1%;
+    --popover-foreground: 210 20% 98%;
+    --primary: 25 95% 53.1%; /* Engbras Orange - slightly brighter for dark mode */
+    --primary-foreground: 210 20% 98%;
+    --secondary: 215 27.9% 16.9%; /* Darker gray for secondary elements */
+    --secondary-foreground: 210 20% 98%;
+    --muted: 215 27.9% 16.9%;
+    --muted-foreground: 217.9 10.6% 64.9%;
+    --accent: 215 27.9% 16.9%;
+    --accent-foreground: 25 95% 53.1%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 215 27.9% 16.9%;
+    --input: 215 27.9% 16.9%;
+    --ring: 25 95% 53.1%;
+
+    --engbras-orange: 25 95% 53.1%;
+    --engbras-gray-light: 224 71.4% 10%; /* Darker version of light gray */
+    --engbras-gray: 215 27.9% 25%; /* Darker gray */
+    --engbras-gray-dark: 210 20% 98%; /* Light text for dark mode */
+    --engbras-white: 224 71.4% 4.1%; /* Becomes background */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased font-sans;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+  }
+  html {
+    scroll-behavior: smooth;
+    @apply text-[16px] md:text-[17px]; /* Base font size */
+  }
+  h1,h2,h3,h4,h5,h6 {
+    @apply font-slab text-foreground; /* Use foreground for titles to adapt to theme */
+  }
+}
+
+/* Custom scrollbar for dark mode */
+.dark ::-webkit-scrollbar-track {
+  background: hsl(var(--secondary) / 0.5);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary) / 0.6);
+  border-color: hsl(var(--secondary) / 0.5);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary));
+}
+
+
+/* General Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--secondary));
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary) / 0.7);
+  border-radius: 10px;
+  border: 2px solid hsl(var(--secondary));
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary));
+}
+
+.text-gradient-orange {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-400;
+  /* Dark mode gradient can be different if needed */
+}
+.dark .text-gradient-orange {
+   @apply from-orange-400 via-amber-400 to-yellow-300;
+}
+
+
+@keyframes gradient-flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.prose {
+  @apply text-foreground font-sans;
+}
+.prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
+  @apply text-foreground font-slab;
+}
+.prose a {
+  @apply text-primary hover:underline;
+}
+.prose strong {
+  @apply text-foreground font-semibold;
+}
+.prose blockquote {
+  @apply border-l-4 border-primary pl-4 italic text-muted-foreground;
+}
+
+/* For the client logo scroller */
+.logo-scroller {
+  max-width: 100%;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, hsl(0 0% 0% / 0), hsl(0 0% 0% / 1) 10%, hsl(0 0% 0% / 1) 90%, hsl(0 0% 0% / 0));
+  mask-image: linear-gradient(to right, hsl(0 0% 0% / 0), hsl(0 0% 0% / 1) 10%, hsl(0 0% 0% / 1) 90%, hsl(0 0% 0% / 0));
+}
+
+.logo-scroller-inner {
+  display: flex;
+  flex-wrap: nowrap;
+  width: max-content;
+}
+
+.logo-scroller-inner img {
+  height: 60px; /* Adjust as needed */
+  margin: 0 2rem; /* Spacing between logos */
+  object-fit: contain;
+  filter: grayscale(100%) brightness(0.8); /* Slightly darker for better visibility on light bg */
+  opacity: 0.7;
+  transition: filter 0.3s ease, opacity 0.3s ease;
+}
+
+.dark .logo-scroller-inner img {
+  filter: grayscale(100%) brightness(1.5) contrast(1.2); /* Adjust for dark mode */
+  opacity: 0.6;
+}
+
+
+.logo-scroller-inner:hover img {
+  animation-play-state: paused;
+}
+
+.logo-scroller-inner img:hover {
+  filter: grayscale(0%) brightness(1) contrast(1);
+  opacity: 1;
+}
+.dark .logo-scroller-inner img:hover {
+  filter: grayscale(0%) brightness(1) contrast(1);
+  opacity: 1;
+}
+
+/* Ensure inputs and textareas adapt to dark mode */
+.dark input, .dark textarea, .dark select {
+  @apply bg-card border-border text-foreground placeholder:text-muted-foreground;
+}
+.dark input:focus, .dark textarea:focus, .dark select:focus {
+  @apply ring-ring border-ring;
+}
+
+/* Ensure buttons adapt to dark mode */
+.dark .bg-engbras-orange {
+  @apply bg-primary text-primary-foreground;
+}
+.dark .hover\:bg-orange-600:hover {
+   background-color: hsl(var(--primary) / 0.9);
+}
+.dark .border-engbras-orange {
+  @apply border-primary text-primary;
+}
+.dark .hover\:bg-engbras-orange:hover {
+  @apply hover:bg-primary hover:text-primary-foreground;
+}
+
+/* Toast dark mode */
+.dark .toast-default {
+  @apply bg-card border-border text-foreground;
+}
+.dark .toast-destructive {
+  @apply bg-destructive border-destructive text-destructive-foreground;
+}
+.dark .toast-success { /* Example custom variant */
+  @apply bg-green-600 border-green-700 text-white;
+}
+.dark .bg-engbras-orange.text-engbras-white { /* Specific toast like contact form */
+   @apply bg-primary text-primary-foreground;
+}
