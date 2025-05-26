@@ -26,17 +26,17 @@ const cardVariants = {
 const TestimonialCard = ({ quote, author, company }) => (
   <motion.div
     variants={cardVariants}
-    className="bg-engbras-gray-light p-8 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col"
+    className="bg-card p-8 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col text-card-foreground"
   >
     <div className="flex mb-4">
       {[...Array(5)].map((_, i) => (
         <Star key={i} size={20} className="text-yellow-400 fill-yellow-400" />
       ))}
     </div>
-    <p className="text-engbras-gray-dark italic mb-6 leading-relaxed flex-grow">"{quote}"</p>
+    <p className="italic mb-6 leading-relaxed flex-grow">"{quote}"</p>
     <div className="mt-auto">
-      <p className="font-semibold text-lg text-engbras-orange">{author}</p>
-      <p className="text-sm text-engbras-gray-dark">{company}</p>
+      <p className="font-semibold text-lg text-primary">{author}</p>
+      <p className="text-sm text-muted-foreground">{company}</p>
     </div>
   </motion.div>
 );
@@ -49,12 +49,12 @@ const TestimonialsSection = () => {
   ];
 
   return (
-    <section className="py-24 bg-engbras-white">
+    <section className="py-24 bg-background text-foreground">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} variants={sectionVariants}>
           <motion.h2
             variants={cardVariants}
-            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-engbras-gray-dark text-center mb-16"
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center mb-16"
             style={{ fontFamily: "'Roboto Slab', serif" }}
           >
             O que nossos <span className="text-gradient-orange">Clientes Dizem</span>

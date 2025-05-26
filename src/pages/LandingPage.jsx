@@ -1,4 +1,3 @@
-
 import React from "react";
 import { motion } from "framer-motion";
 import HeroSection from "@/components/landing/HeroSection";
@@ -59,8 +58,8 @@ const LandingPage = () => {
         <HeroSection />
         <StatsSection />
         <ServicesSection />
+        <AboutSection /> 
         <ClientsSection />
-        <AboutSection />
         <TestimonialsSection />
         <ContactSection />
       </motion.div>

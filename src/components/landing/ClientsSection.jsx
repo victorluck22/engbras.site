@@ -17,14 +17,14 @@ const ClientsSection = () => {
   const duplicatedLogos = [...clientLogos, ...clientLogos, ...clientLogos]; 
 
   return (
-    <section id="clients" className="py-20 md:py-24 bg-engbras-gray-light">
+    <section id="clients" className="py-20 md:py-24 bg-secondary text-secondary-foreground">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.7, ease: "easeOut" }}
-          className="text-3xl sm:text-4xl font-bold text-engbras-gray-dark text-center mb-4"
+          className="text-3xl sm:text-4xl font-bold text-foreground text-center mb-4"
         >
           Nossos <span className="text-gradient-orange">Clientes</span>
         </motion.h2>
@@ -33,7 +33,7 @@ const ClientsSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }}
-          className="text-lg text-engbras-gray-dark text-center max-w-xl mx-auto mb-12 md:mb-16"
+          className="text-lg text-muted-foreground text-center max-w-xl mx-auto mb-12 md:mb-16"
         >
           Temos orgulho de colaborar com empresas líderes em diversos setores, construindo parcerias de sucesso.
         </motion.p>
@@ -41,21 +41,20 @@ const ClientsSection = () => {
         <div className="logo-scroller relative">
           <motion.div 
             className="logo-scroller-inner"
-            animate={{ x: ['0%', '-100%'] }} // Animate from 0% to -100% (original logos length)
+            animate={{ x: ['0%', '-100%'] }}
             transition={{
               ease: 'linear',
-              duration: 45, // Increased duration for smoother scroll
+              duration: 45,
               repeat: Infinity,
             }}
           >
             {duplicatedLogos.map((logo, index) => (
               <div key={`${logo.id}-${index}`} className="flex-shrink-0 px-8 md:px-12 py-4">
-                <img 
-                  className="h-12 md:h-16 object-contain filter grayscale hover:grayscale-0 opacity-60 hover:opacity-100 transition-all duration-300 cursor-pointer"
+                <img  
+                  className="h-12 md:h-16 object-contain filter grayscale hover:grayscale-0 opacity-60 hover:opacity-100 transition-all duration-300 cursor-pointer dark:filter-none dark:opacity-80 dark:hover:opacity-100"
                   alt={logo.alt}
-                 src={`https://logo.clearbit.com/${logo.name.toLowerCase().replace(/\s+/g, '')}.com?size=100`}
-                 title={logo.name}
-                 />
+                  title={logo.name}
+                  src="https://images.unsplash.com/photo-1649000808933-1f4aac7cad9a" />
               </div>
             ))}
           </motion.div>

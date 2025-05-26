@@ -1,4 +1,3 @@
-
 import React from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -26,7 +25,7 @@ const textVariants = {
 
 const AboutSection = () => {
   return (
-    <section id="about" className="py-20 md:py-24 bg-engbras-white overflow-hidden">
+    <section id="about" className="py-20 md:py-24 bg-background text-foreground overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial="hidden"
@@ -35,28 +34,27 @@ const AboutSection = () => {
           className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center"
         >
           <motion.div variants={imageVariants}>
-            <img  
+            <img   
               className="rounded-xl shadow-2xl w-full h-auto object-cover aspect-[4/3] lg:aspect-square"
               alt="Equipe Engbras colaborando em um projeto de engenharia moderno em um escritório com plantas e luz natural"
-              src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80" 
-             src="https://images.unsplash.com/photo-1581092335331-5e00ac65e934" />
+             src="https://images.unsplash.com/photo-1696494561079-ddabcbb308e8" />
           </motion.div>
           <motion.div variants={textVariants}>
             <h2 
-              className="text-3xl sm:text-4xl lg:text-5xl font-bold text-engbras-gray-dark mb-6 lg:mb-8"
+              className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6 lg:mb-8"
             >
               Sobre a <span className="text-gradient-orange">Engbras</span>
             </h2>
-            <p className="text-lg text-engbras-gray-dark mb-6 leading-relaxed">
+            <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
               Somos uma empresa de engenharia apaixonada por inovação e excelência. Com mais de duas décadas de experiência, nos dedicamos a fornecer soluções de engenharia que superam as expectativas dos nossos clientes, utilizando tecnologia de ponta e as melhores práticas do mercado.
             </p>
-            <p className="text-lg text-engbras-gray-dark mb-8 lg:mb-10 leading-relaxed">
+            <p className="text-lg text-muted-foreground mb-8 lg:mb-10 leading-relaxed">
               Nossa equipe é formada por profissionais altamente qualificados e comprometidos com a entrega de projetos de alta qualidade, dentro do prazo e do orçamento, sempre buscando o que há de mais moderno e eficiente.
             </p>
             <Button 
               asChild 
               size="lg" 
-              className="bg-engbras-orange hover:bg-orange-600 text-engbras-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 py-3 px-8 text-base"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 py-3 px-8 text-base"
             >
               <Link to="/#contact">Conheça Nossas Soluções</Link>
             </Button>
