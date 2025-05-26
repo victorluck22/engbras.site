@@ -52,7 +52,7 @@ const App = () => {
         <meta name="keywords" content="engenharia, projetos, construção, inovação, consultoria, Engbras" />
         <meta property="og:site_name" content="Engbras Engenharia e Inovação" />
         <meta name="theme-color" content="#FF7A00" /> 
-        <link rel="icon" type="image/svg+xml" href="/engbras-icon.svg" />
+        <link rel="icon" type="image/svg+xml" href="/engbras-icon.png" />
       </Helmet>
       <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300 ease-in-out">
         {!isAdminRoute && !isLoginRoute && <ScrollProgress />}

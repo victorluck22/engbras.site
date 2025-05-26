@@ -70,7 +70,7 @@ const Header = () => {
             transition={{ duration: 0.5, ease: "easeOut" }}
           >
             <Link to="/" className="text-3xl font-slab font-bold text-primary hover:opacity-80 transition-opacity">
-              Engbras
+              <img src="/public/images/logo_engbras.png" alt="Engbras Logo" className="inline-block h-12 w-30 mr-2" />
             </Link>
           </motion.div>
 
