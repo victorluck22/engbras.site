@@ -56,7 +56,6 @@ const Header = () => {
     { to: "/#services", text: "Serviços", icon: Briefcase },
     { to: "/projects", text: "Projetos", icon: Briefcase },
     { to: "/#clients", text: "Clientes", icon: Users },
-    { to: "/#about", text: "Sobre Nós", icon: Info },
     { to: "/blog", text: "Blog", icon: Newspaper },
     { to: "/#contact", text: "Contato", icon: MessageSquare },
   ];

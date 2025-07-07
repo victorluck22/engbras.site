@@ -125,10 +125,9 @@ const BlogPage = () => {
               y: 0,
               transition: { delay: 0.2, duration: 0.6 },
             }}
-            className="text-4xl sm:text-5xl lg:text-6xl font-bold text-engbras-gray-dark mb-4"
-            style={{ fontFamily: "'Roboto Slab', serif" }}
+            className="text-4xl sm:text-5xl lg:text-6xl font-bold text-engbras-gray-dark mb-4 font-handel"
           >
-            Nosso <span className="text-gradient-orange">Blog</span>
+            Blog <span className="text-gradient-orange">ENGBRAS</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: -20 }}
@@ -204,16 +203,13 @@ const BlogPage = () => {
                   </Link>
                 )}
                 <div className="p-6 flex-grow flex flex-col">
-                  <h2
-                    className="text-2xl font-semibold text-engbras-gray-dark mb-3 hover:text-engbras-orange transition-colors"
-                    style={{ fontFamily: "'Roboto Slab', serif" }}
-                  >
+                  <h2 className="text-2xl font-semibold text-engbras-gray-dark mb-3 hover:text-engbras-orange transition-colors font-handel">
                     <Link to={`/blog/${post.id}`}>{post.title}</Link>
                   </h2>
                   <div className="flex items-center text-sm text-engbras-gray mb-4">
                     <Calendar size={16} className="mr-2 text-engbras-orange" />
                     <span>
-                      {new Date(post.date).toLocaleDateString("pt-BR")}
+                      {new Date(post.created_at).toLocaleDateString("pt-BR")}
                     </span>
                   </div>
                   <p className="text-engbras-gray-dark mb-6 line-clamp-4 flex-grow leading-relaxed">

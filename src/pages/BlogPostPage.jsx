@@ -146,8 +146,7 @@ const BlogPostPage = () => {
               x: 0,
               transition: { delay: 0.2, duration: 0.6 },
             }}
-            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-engbras-gray-dark mb-6"
-            style={{ fontFamily: "'Roboto Slab', serif" }}
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-engbras-gray-dark mb-6 font-handel"
           >
             {post.title}
           </motion.h1>

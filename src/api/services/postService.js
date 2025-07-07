@@ -6,7 +6,7 @@ const useMock = import.meta.env.VITE_USE_MOCK === "true";
 
 const LOCAL_STORAGE_KEY = "posts";
 if (useMock) {
-  const mockUser = JSON.parse(getFromLocal("authUser"));
+  //const mockUser = JSON.parse(getFromLocal("authUser"));
 }
 
 const getPostsFromStorage = () => JSON.parse(getFromLocal("posts")) || [];
@@ -27,10 +27,10 @@ export const getAllPosts = async () => {
   }
   try {
     const { data } = await httpClient.get("/posts");
-    console.log(data);
+    //console.log(data);
     return data;
   } catch (error) {
-    console.error("Error fetching posts:", error);
+    //console.error("Error fetching posts:", error);
     throw error;
   }
 };
@@ -56,10 +56,11 @@ export const getPublishedPosts = async () => {
 
 export const createPost = async (postData) => {
   if (useMock) {
+    const mockUser = JSON.parse(getFromLocal("authUser"));
     let posts = getPostsFromStorage();
     const newPost = {
       id: Date.now().toString(),
-      user: mockUser,
+      user: mockUser ?? [],
       created_at: Date.now(),
       updated_at: Date.now(),
       ...postData,
