@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/use-toast';
-import { Mail, Search, Trash2, Download, Send } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
+import { Mail, Search, Trash2, Download, Send } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,31 +15,84 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  getAllSubscribers,
+  deleteSubscriber,
+} from "../../api/services/subscriberService";
 
 const NewsletterSubscribersPage = () => {
-  const [subscribers, setSubscribers] = useState([]);
+  const [allSubscribers, setAllSubscribers] = useState([]);
   const [filteredSubscribers, setFilteredSubscribers] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const { toast } = useToast();
 
   // Simulação de carregamento de inscritos (usar localStorage)
   useEffect(() => {
-    const storedSubscribers = JSON.parse(localStorage.getItem('newsletterSubscribers') || '[]');
-    setSubscribers(storedSubscribers);
-    setFilteredSubscribers(storedSubscribers);
+    loadSubscribers();
   }, []);
 
+  const loadSubscribers = async () => {
+    try {
+      const { subscribers } = await getAllSubscribers();
+
+      if (subscribers) {
+        setAllSubscribers(subscribers);
+        setFilteredSubscribers(subscribers);
+        //console.log(subscribers);
+      } else {
+        toast({
+          title: "Erro ao carregar inscritos",
+          description:
+            "Ocorreu um erro ao carregar os inscritos. Por favor, tente novamente mais tarde.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching subscribers:", error);
+      toast({
+        title: "Erro ao carregar inscritos",
+        description:
+          "Ocorreu um erro ao carregar os inscritos. Por favor, tente novamente mais tarde.",
+        variant: "destructive",
+      });
+    }
+  };
+
   useEffect(() => {
-    const results = subscribers.filter(subscriber =>
+    const results = allSubscribers.filter((subscriber) =>
       subscriber.email.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredSubscribers(results);
-  }, [searchTerm, subscribers]);
+  }, [searchTerm, allSubscribers]);
 
   const handleDeleteSubscriber = (emailToDelete) => {
-    const updatedSubscribers = subscribers.filter(sub => sub.email !== emailToDelete);
-    localStorage.setItem('newsletterSubscribers', JSON.stringify(updatedSubscribers));
-    setSubscribers(updatedSubscribers);
+    try {
+      if (deleteSubscriber(emailToDelete)) {
+        toast({
+          title: "Inscrito Removido",
+          description: `O email ${emailToDelete} foi removido da lista.`,
+          className: "bg-primary text-primary-foreground toast-success",
+        });
+        setAllSubscribers((prevSubscribers) =>
+          prevSubscribers.filter((s) => s.email !== emailToDelete)
+        );
+      } else {
+        toast({
+          title: "Erro ao Remover Inscrito",
+          description: deleteSubscriber.error,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Error deleting subscriber:", error);
+      toast({
+        title: "Erro ao Remover Inscrito",
+        description:
+          "Ocorreu um erro ao remover o inscrito. Por favor, tente novamente mais tarde.",
+        variant: "destructive",
+      });
+    }
+    getAllSubscribers();
     toast({
       title: "Inscrito Removido",
       description: `O email ${emailToDelete} foi removido da lista.`,
@@ -49,13 +102,22 @@ const NewsletterSubscribersPage = () => {
 
   const handleExportCSV = () => {
     if (filteredSubscribers.length === 0) {
-      toast({ title: "Nada para Exportar", description: "Não há inscritos para exportar.", variant: "destructive" });
+      toast({
+        title: "Nada para Exportar",
+        description: "Não há inscritos para exportar.",
+        variant: "destructive",
+      });
       return;
     }
-    const csvContent = "data:text/csv;charset=utf-8," 
-      + "Email,DataInscricao\n" 
-      + filteredSubscribers.map(s => `${s.email},${new Date(s.date).toLocaleDateString("pt-BR")}`).join("\n");
-    
+    const csvContent =
+      "data:text/csv;charset=utf-8," +
+      "Email,DataInscricao\n" +
+      filteredSubscribers
+        .map(
+          (s) => `${s.email},${new Date(s.date).toLocaleDateString("pt-BR")}`
+        )
+        .join("\n");
+
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
@@ -63,9 +125,12 @@ const NewsletterSubscribersPage = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    toast({ title: "Exportação Iniciada", description: "O download do arquivo CSV deve começar em breve." });
+    toast({
+      title: "Exportação Iniciada",
+      description: "O download do arquivo CSV deve começar em breve.",
+    });
   };
-  
+
   const cardAnimation = {
     initial: { opacity: 0, y: 20 },
     animate: (i) => ({
@@ -73,7 +138,7 @@ const NewsletterSubscribersPage = () => {
       y: 0,
       transition: { delay: i * 0.05, duration: 0.4, ease: "easeOut" },
     }),
-    exit: { opacity: 0, y: -10, transition: { duration: 0.2 } }
+    exit: { opacity: 0, y: -10, transition: { duration: 0.2 } },
   };
 
   // Placeholder para simular adição de email (se necessário)
@@ -88,7 +153,7 @@ const NewsletterSubscribersPage = () => {
 
   return (
     <div className="p-6 sm:p-8">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
@@ -98,7 +163,11 @@ const NewsletterSubscribersPage = () => {
           Inscritos na <span className="text-gradient-orange">Newsletter</span>
         </h1>
         <div className="flex space-x-2">
-          <Button variant="outline" onClick={handleExportCSV} disabled={filteredSubscribers.length === 0}>
+          <Button
+            variant="outline"
+            onClick={handleExportCSV}
+            disabled={filteredSubscribers.length === 0}
+          >
             <Download size={18} className="mr-2" /> Exportar CSV
           </Button>
           {/* <Button onClick={() => alert("Funcionalidade de enviar email em massa (placeholder).")} className="bg-primary hover:bg-primary/90 text-primary-foreground">
@@ -107,10 +176,10 @@ const NewsletterSubscribersPage = () => {
         </div>
       </motion.div>
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay:0.1, duration: 0.5, ease: "easeOut" }}
+        transition={{ delay: 0.1, duration: 0.5, ease: "easeOut" }}
         className="mb-6"
       >
         <div className="relative">
@@ -124,30 +193,47 @@ const NewsletterSubscribersPage = () => {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
         </div>
       </motion.div>
-      
+
       {/* <Button onClick={addTestSubscriber} className="mb-4">Adicionar Email de Teste</Button> */}
 
       {filteredSubscribers.length === 0 ? (
-        <motion.p 
+        <motion.p
           initial={{ opacity: 0 }}
-          animate={{ opacity: 1, transition: {delay: 0.2} }}
+          animate={{ opacity: 1, transition: { delay: 0.2 } }}
           className="text-center text-muted-foreground text-lg py-10"
         >
-          {searchTerm ? "Nenhum inscrito encontrado para sua busca." : "Ainda não há inscritos na newsletter."}
+          {searchTerm
+            ? "Nenhum inscrito encontrado para sua busca."
+            : "Ainda não há inscritos na newsletter."}
         </motion.p>
       ) : (
         <div className="overflow-x-auto bg-card p-2 rounded-lg border border-border shadow-md">
           <table className="min-w-full divide-y divide-border">
             <thead className="bg-secondary">
               <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Email</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider hidden sm:table-cell">Data de Inscrição</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Ações</th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider"
+                >
+                  Email
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider hidden sm:table-cell"
+                >
+                  Data de Inscrição
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider"
+                >
+                  Ações
+                </th>
               </tr>
             </thead>
             <tbody className="bg-card divide-y divide-border">
               {filteredSubscribers.map((subscriber, index) => (
-                <motion.tr 
+                <motion.tr
                   key={subscriber.email}
                   variants={cardAnimation}
                   initial="initial"
@@ -158,17 +244,36 @@ const NewsletterSubscribersPage = () => {
                 >
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
-                      <Mail size={18} className="mr-3 text-primary flex-shrink-0" />
-                      <span className="text-sm font-medium text-foreground truncate">{subscriber.email}</span>
+                      <Mail
+                        size={18}
+                        className="mr-3 text-primary flex-shrink-0"
+                      />
+                      <span className="text-sm font-medium text-foreground truncate">
+                        {subscriber.email}
+                      </span>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground hidden sm:table-cell">
-                    {subscriber.date ? new Date(subscriber.date).toLocaleDateString("pt-BR", { year: 'numeric', month: 'long', day: 'numeric' }) : 'Não disponível'}
+                    {subscriber.created_at
+                      ? new Date(subscriber.created_at).toLocaleDateString(
+                          "pt-BR",
+                          {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          }
+                        )
+                      : "Não disponível"}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive" title="Remover Inscrito">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-muted-foreground hover:text-destructive"
+                          title="Remover Inscrito"
+                        >
                           <Trash2 size={18} />
                         </Button>
                       </AlertDialogTrigger>
@@ -176,12 +281,18 @@ const NewsletterSubscribersPage = () => {
                         <AlertDialogHeader>
                           <AlertDialogTitle>Confirmar Remoção</AlertDialogTitle>
                           <AlertDialogDescription>
-                            Tem certeza que deseja remover o email "{subscriber.email}" da lista de inscritos?
+                            Tem certeza que deseja remover o email "
+                            {subscriber.email}" da lista de inscritos?
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => handleDeleteSubscriber(subscriber.email)} className="bg-destructive hover:bg-destructive/90 text-destructive-foreground">
+                          <AlertDialogAction
+                            onClick={() =>
+                              handleDeleteSubscriber(subscriber.email)
+                            }
+                            className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+                          >
                             Remover
                           </AlertDialogAction>
                         </AlertDialogFooter>
@@ -194,8 +305,9 @@ const NewsletterSubscribersPage = () => {
           </table>
         </div>
       )}
-       <p className="text-xs text-muted-foreground mt-4">
-        Total de inscritos: {filteredSubscribers.length} {searchTerm && `(de ${subscribers.length} no total)`}
+      <p className="text-xs text-muted-foreground mt-4">
+        Total de inscritos: {filteredSubscribers.length}{" "}
+        {searchTerm && `(de ${allSubscribers.length} no total)`}
       </p>
     </div>
   );

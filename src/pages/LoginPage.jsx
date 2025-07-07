@@ -1,56 +1,72 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useToast } from '@/components/ui/use-toast';
-import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/components/ui/use-toast";
+import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { Helmet } from "react-helmet-async";
+import { useAuth } from "../hooks/useAuth";
+import { loginRequest } from "@/api/services/authService";
 
 const LoginPage = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const { login } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleSubmit = (e) => {
+  /**
+   * Handles the login form submission and authentication process.
+   *
+   * @param {Event} e - The form submission event
+   * @description Validates user credentials and either authenticates the user or shows an error toast
+   * - Checks if email and password match 'adm'
+   * - Sets authentication state in localStorage on successful login
+   * - Redirects to admin dashboard on successful authentication
+   * - Displays toast notifications for success or failure
+   */
+  const handleLogin = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
+    try {
+      setIsLoading(true);
+      const { access_token, user } = await loginRequest({ email, password });
+      //console.log(user);
+      login(access_token, user);
 
-    // Simulação de autenticação
-    setTimeout(() => {
-      if (email === 'adm' && password === 'adm') {
-        localStorage.setItem('adminAuthenticated', 'true');
-        localStorage.setItem('adminUser', email);
-        toast({
-          title: 'Login bem-sucedido!',
-          description: 'Redirecionando para o painel...',
-          variant: 'default', 
-          className: 'bg-green-500 text-white border-green-600 dark:bg-green-600 dark:text-white dark:border-green-700',
-        });
-        navigate('/admin/dashboard');
-      } else {
-        toast({
-          title: 'Erro de Login',
-          description: 'Usuário ou senha inválidos. Por favor, tente novamente.',
-          variant: 'destructive',
-        });
-        setIsLoading(false);
-      }
-    }, 1000);
+      toast({
+        title: "Login bem-sucedido!",
+        description: "Redirecionando para o painel...",
+        variant: "default",
+        className: "bg-green-500 text-white",
+      });
+      navigate("/admin");
+    } catch (error) {
+      toast({
+        title: "Erro de login",
+        description: "Erro ao fazer login",
+        variant: "destructive",
+        className: "bg-red-500 text-white",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <>
       <Helmet>
         <title>Login - Painel Administrativo Engbras</title>
-        <meta name="description" content="Acesse o painel administrativo da Engbras." />
+        <meta
+          name="description"
+          content="Acesse o painel administrativo da Engbras."
+        />
       </Helmet>
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-secondary to-background p-4">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -30, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
@@ -58,15 +74,29 @@ const LoginPage = () => {
         >
           <div className="text-center mb-8">
             <Link to="/" className="inline-block mb-4">
-              <img-replace src="/engbras-logo-color.png" alt="Engbras Logo" className="h-12 w-auto mx-auto" />
+              <img-replace
+                src="/engbras-logo-color.png"
+                alt="Engbras Logo"
+                className="h-12 w-auto mx-auto"
+              />
             </Link>
-            <h1 className="text-3xl font-bold text-foreground" style={{fontFamily: "'Roboto Slab', serif"}}>Painel Administrativo</h1>
+            <h1
+              className="text-3xl font-bold text-foreground"
+              style={{ fontFamily: "'Roboto Slab', serif" }}
+            >
+              Painel Administrativo
+            </h1>
             <p className="text-muted-foreground mt-1">Bem-vindo(a) de volta!</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleLogin} className="space-y-6">
             <div>
-              <Label htmlFor="email" className="text-sm font-medium text-foreground">Usuário (adm)</Label>
+              <Label
+                htmlFor="email"
+                className="text-sm font-medium text-foreground"
+              >
+                Usuário (adm)
+              </Label>
               <Input
                 id="email"
                 type="text"
@@ -79,11 +109,16 @@ const LoginPage = () => {
             </div>
 
             <div>
-              <Label htmlFor="password" className="text-sm font-medium text-foreground">Senha (adm)</Label>
+              <Label
+                htmlFor="password"
+                className="text-sm font-medium text-foreground"
+              >
+                Senha (adm)
+              </Label>
               <div className="relative mt-1">
                 <Input
                   id="password"
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Digite 'adm'"
@@ -102,24 +137,26 @@ const LoginPage = () => {
                 </Button>
               </div>
             </div>
-            
-            <Button 
-              type="submit" 
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-3 text-base" 
+
+            <Button
+              type="submit"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-3 text-base"
               disabled={isLoading}
             >
               {isLoading ? (
-                <motion.div 
-                  className="w-5 h-5 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin"
-                />
+                <motion.div className="w-5 h-5 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
               ) : (
-                'Entrar'
+                "Entrar"
               )}
             </Button>
           </form>
-          
+
           <div className="mt-8 text-center">
-            <Button variant="link" asChild className="text-sm text-primary hover:underline">
+            <Button
+              variant="link"
+              asChild
+              className="text-sm text-primary hover:underline"
+            >
               <Link to="/">
                 <ArrowLeft size={16} className="mr-1" /> Voltar para o site
               </Link>

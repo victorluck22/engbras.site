@@ -24,42 +24,35 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { getAllPosts, deletePost } from "../../api/services/postService";
+import { getAllContacts } from "../../api/services/siteContactService";
 
 const ManagePostsPage = () => {
-  const [allPosts, setAllPosts] = useState([]);
-  const [filteredPosts, setFilteredPosts] = useState([]);
+  const [allContacts, setAllContacts] = useState([]);
+  const [filteredContacts, setFilteredContacts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const { toast } = useToast();
 
   useEffect(() => {
-    loadPosts();
+    loadContacts();
   }, []);
 
-  const loadPosts = async () => {
+  const loadContacts = async () => {
     try {
-      const data = await getAllPosts();
-      const posts = data.list;
-      if (posts.length > 0) {
-        var sortedPosts = posts.sort(
+      const { siteContacts } = await getAllContacts();
+      if (siteContacts.length > 0) {
+        var sortedContacts = siteContacts.sort(
           (a, b) => new Date(b.created_at) - new Date(a.created_at)
         );
         //localStorage.setItem("blogPosts", JSON.stringify(sortedPosts));
-        setAllPosts(sortedPosts);
-        setFilteredPosts(sortedPosts);
-      } else {
-        toast({
-          title: "Erro ao carregar posts",
-          description: data.message,
-          variant: "destructive",
-        });
+        setAllContacts(sortedContacts);
+        setFilteredContacts(sortedContacts);
       }
     } catch (error) {
       console.error(error);
       toast({
-        title: "Erro ao carregar posts",
+        title: "Erro ao carregar os contatos do site",
         description:
-          "Ocorreu um erro ao carregar os posts. Por favor, tente novamente mais tarde.",
+          "Ocorreu um erro ao carregar os dados. Por favor, tente novamente mais tarde.",
         variant: "destructive",
       });
     }
@@ -73,21 +66,11 @@ const ManagePostsPage = () => {
   };
 
   useEffect(() => {
-    const results = allPosts.filter((post) =>
-      post.title.toLowerCase().includes(searchTerm.toLowerCase())
+    const results = allContacts.filter((contact) =>
+      contact.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
-    setFilteredPosts(results);
-  }, [searchTerm, allPosts]);
-
-  const handleDeletePost = (postId) => {
-    deletePost(postId);
-    loadPosts();
-    toast({
-      title: "Post Excluído",
-      description: "O post foi removido com sucesso.",
-      className: "bg-primary text-primary-foreground toast-success",
-    });
-  };
+    setFilteredContacts(results);
+  }, [searchTerm, allContacts]);
 
   const cardAnimation = {
     initial: { opacity: 0, y: 20 },
@@ -108,16 +91,9 @@ const ManagePostsPage = () => {
         className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4"
       >
         <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
-          Gerenciar <span className="text-gradient-orange">Posts</span>
+          Gerenciar{" "}
+          <span className="text-gradient-orange">Contatos do Site</span>
         </h1>
-        <Button
-          asChild
-          className="bg-primary hover:bg-primary/90 text-primary-foreground"
-        >
-          <Link to="/admin/posts/create">
-            <PlusCircle size={20} className="mr-2" /> Novo Post
-          </Link>
-        </Button>
       </motion.div>
 
       <motion.div
@@ -129,7 +105,7 @@ const ManagePostsPage = () => {
         <div className="relative">
           <Input
             type="text"
-            placeholder="Buscar posts por título..."
+            placeholder="Buscar contatos por nome"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10 py-3 text-base border-input focus:border-ring focus:ring-ring bg-background placeholder:text-muted-foreground"
@@ -138,15 +114,15 @@ const ManagePostsPage = () => {
         </div>
       </motion.div>
 
-      {filteredPosts.length === 0 ? (
+      {filteredContacts.length === 0 ? (
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1, transition: { delay: 0.2 } }}
           className="text-center text-muted-foreground text-lg py-10"
         >
           {searchTerm
-            ? "Nenhum post encontrado para sua busca."
-            : "Nenhum post para gerenciar ainda. Crie um novo!"}
+            ? "Nenhum contato encontrado para sua busca."
+            : "Nenhum contato recebido ainda"}
         </motion.p>
       ) : (
         <div className="overflow-x-auto bg-card p-2 rounded-lg border border-border shadow-md">
@@ -157,13 +133,19 @@ const ManagePostsPage = () => {
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider"
                 >
-                  Título
+                  Nome
                 </th>
                 <th
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider hidden md:table-cell"
                 >
-                  Autor
+                  Email
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider hidden md:table-cell"
+                >
+                  Telefone
                 </th>
                 <th
                   scope="col"
@@ -175,14 +157,14 @@ const ManagePostsPage = () => {
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider"
                 >
-                  Ações
+                  Mensagem
                 </th>
               </tr>
             </thead>
             <tbody className="bg-card divide-y divide-border">
-              {filteredPosts.map((post, index) => (
+              {filteredContacts.map((contact, index) => (
                 <motion.tr
-                  key={post.id}
+                  key={contact.id}
                   variants={cardAnimation}
                   initial="initial"
                   animate="animate"
@@ -192,81 +174,20 @@ const ManagePostsPage = () => {
                 >
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-foreground truncate max-w-xs">
-                      {post.title}
-                    </div>
-                    <div className="text-xs text-muted-foreground md:hidden">
-                      {post.author ?? "Admin"} -{" "}
-                      {new Date(post.created_at).toLocaleDateString("pt-BR")}
+                      {contact.name}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground hidden md:table-cell">
-                    {post.user ? post.user.name : "Admin"}
+                    {contact.email || "Admin"}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground hidden md:table-cell">
+                    {contact.phone || "Admin"}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground hidden lg:table-cell">
-                    {new Date(post.created_at).toLocaleDateString("pt-BR")}
+                    {new Date(contact.created_at).toLocaleDateString("pt-BR")}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div className="flex items-center space-x-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        asChild
-                        className="text-muted-foreground hover:text-blue-500"
-                      >
-                        <Link
-                          to={`/blog/${post.id}`}
-                          target="_blank"
-                          title="Visualizar Post"
-                        >
-                          <Eye size={18} />
-                        </Link>
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        asChild
-                        className="text-muted-foreground hover:text-primary"
-                      >
-                        <Link
-                          to={`/admin/posts/edit/${post.id}`}
-                          title="Editar Post"
-                        >
-                          <Edit3 size={18} />
-                        </Link>
-                      </Button>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="text-muted-foreground hover:text-destructive"
-                            title="Excluir Post"
-                          >
-                            <Trash2 size={18} />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              Confirmar Exclusão
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Tem certeza que deseja excluir o post "
-                              {post.title}"? Esta ação não poderá ser desfeita.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => handleDeletePost(post.id)}
-                              className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
-                            >
-                              Excluir
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
+                    {contact.message}
                   </td>
                 </motion.tr>
               ))}

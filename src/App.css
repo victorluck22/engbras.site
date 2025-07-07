@@ -1,11 +1,15 @@
-
 /* Estilos globais para a Engbras, se necessário. 
    A maioria dos estilos será tratada pelo TailwindCSS. */
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: "HandelGothic", sans-serif;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   /* Por padrão, vamos usar Inter, mas podemos sobrescrever com Roboto Slab onde necessário */
 }

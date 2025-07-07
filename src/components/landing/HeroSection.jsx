@@ -27,26 +27,29 @@ const itemVariants = {
 const HeroSection = () => {
   const { scrollYProgress } = useScroll();
   const parallaxY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
-  
-  const originalImageUrl = "https://images.unsplash.com/photo-1690247571593-27a988539414?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1920&q=80";
+
+  const originalImageUrl =
+    "https://images.unsplash.com/photo-1690247571593-27a988539414?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1920&q=80";
 
   return (
     <section className="relative min-h-[80vh] md:min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-secondary to-background overflow-hidden pt-20 pb-10 md:pt-0 md:pb-0">
-      <motion.div 
-        className="absolute inset-0 z-0"
-        style={{ y: parallaxY }}
-      >
-        <img  
-            src="https://images.unsplash.com/photo-1581093450021-4a7360dde414?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80" 
-            alt="Fundo abstrato de engenharia moderna com linhas de grade e elementos futuristas"
-            className="w-full h-full object-cover opacity-10 md:opacity-20"
-         src="https://images.unsplash.com/photo-1690247571593-27a988539414" />
+      <motion.div className="absolute inset-0 z-0" style={{ y: parallaxY }}>
+        <img
+          src="https://images.unsplash.com/photo-1581093450021-4a7360dde414?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80"
+          alt="Fundo abstrato de engenharia moderna com linhas de grade e elementos futuristas"
+          className="w-full h-full object-cover opacity-10 md:opacity-20"
+          src="https://images.unsplash.com/photo-1690247571593-27a988539414"
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent"></div>
       </motion.div>
-      
+
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-        <motion.div variants={containerVariants} initial="hidden" animate="visible">
-          <motion.div 
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          <motion.div
             variants={itemVariants}
             className="inline-flex items-center justify-center px-4 py-1.5 mb-6 text-sm font-medium text-primary bg-primary/10 rounded-full border border-primary/30 shadow-sm"
           >
@@ -54,34 +57,39 @@ const HeroSection = () => {
           </motion.div>
           <motion.h1
             variants={itemVariants}
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6"
-            style={{ fontFamily: "'Roboto Slab', serif"}}
+            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-foreground mb-6 font-handel"
           >
-            Engenharia que <span className="text-gradient-orange">Constrói o Futuro</span>
+            Engenharia que{" "}
+            <span className="text-gradient-orange font-handel">
+              Constrói o Futuro
+            </span>
           </motion.h1>
           <motion.p
             variants={itemVariants}
-            className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-10 leading-relaxed"
+            className="text-lg md:text-xl text-muted-foreground font-bold max-w-3xl mx-auto mb-10 leading-relaxed"
           >
-            Soluções inovadoras em engenharia para transformar seus projetos em realidade. Qualidade, precisão e compromisso em cada etapa, moldando um amanhã mais eficiente e sustentável.
+            Soluções inovadoras em engenharia para transformar seus projetos em
+            realidade. Qualidade, precisão e compromisso em cada etapa, moldando
+            um amanhã mais eficiente e sustentável.
           </motion.p>
           <motion.div
             variants={itemVariants}
             className="space-x-0 sm:space-x-4 space-y-4 sm:space-y-0 flex flex-col sm:flex-row justify-center items-center"
           >
-            <Button 
-              asChild 
-              size="lg" 
+            <Button
+              asChild
+              size="lg"
               className="bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:w-auto shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 py-3 px-8 text-base group"
             >
-              <Link to="/#services">
-                Nossos Serviços <ArrowRight className="ml-2 h-5 w-5 transform group-hover:translate-x-1 transition-transform duration-200" />
+              <Link to="/#services" className="font-handel">
+                Nossos Serviços{" "}
+                <ArrowRight className="ml-2 h-5 w-5 transform group-hover:translate-x-1 transition-transform duration-200" />
               </Link>
             </Button>
-            <Button 
+            <Button
               asChild
-              size="lg" 
-              variant="outline" 
+              size="lg"
+              variant="outline"
               className="border-primary text-primary hover:bg-primary hover:text-primary-foreground w-full sm:w-auto shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300 py-3 px-8 text-base"
             >
               <Link to="/projects">Ver Projetos</Link>
@@ -89,11 +97,15 @@ const HeroSection = () => {
           </motion.div>
         </motion.div>
       </div>
-       <motion.div 
-        className="absolute bottom-0 left-0 w-full h-16 md:h-24 bg-background" 
+      <motion.div
+        className="absolute bottom-0 left-0 w-full h-16 md:h-24 bg-background"
         style={{ clipPath: "polygon(0 100%, 100% 30%, 100% 100%)" }}
         initial={{ y: 30, opacity: 0 }}
-        animate={{ y: 0, opacity: 1, transition: { delay: 0.8, duration: 0.8, ease: "easeOut" } }}
+        animate={{
+          y: 0,
+          opacity: 1,
+          transition: { delay: 0.8, duration: 0.8, ease: "easeOut" },
+        }}
       />
     </section>
   );

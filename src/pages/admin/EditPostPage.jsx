@@ -4,11 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import SwitchButton from "@/components/ui/switch";
 import { useToast } from "@/components/ui/use-toast";
-import { useNavigate, useParams, Link } from "react-router-dom";
+import { useNavigate, useParams, Link, redirect } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-import NotFoundPage from "@/pages/NotFoundPage";
-
+//import NotFoundPage from "@/pages/NotFoundPage";
+import { getPostById, updatePost } from "../../api/services/postService";
 
 const EditPostPage = () => {
   const { postId } = useParams();
@@ -19,23 +20,30 @@ const EditPostPage = () => {
   const [content, setContent] = useState("");
   const [summary, setSummary] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [isPublished, setIsPublished] = useState(false);
   const [originalPost, setOriginalPost] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    const storedPosts = JSON.parse(localStorage.getItem("blogPosts") || "[]");
-    const postToEdit = storedPosts.find(p => p.id === postId);
+    //const storedPosts = JSON.parse(localStorage.getItem("blogPosts") || "[]");
+    //const postToEdit = storedPosts.find(p => p.id === postId);
 
-    if (postToEdit) {
-      setOriginalPost(postToEdit);
-      setTitle(postToEdit.title);
-      setContent(postToEdit.content);
-      setSummary(postToEdit.summary || "");
-      setImageUrl(postToEdit.imageUrl || "");
-    }
+    getPostData();
     setIsLoading(false);
   }, [postId]);
+
+  const getPostData = async () => {
+    const { post } = await getPostById(postId);
+    if (post) {
+      setOriginalPost(post);
+      setTitle(post.title);
+      setContent(post.content);
+      setSummary(post.summary || "");
+      setImageUrl(post.image || "");
+      setIsPublished(post.published || false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -56,19 +64,16 @@ const EditPostPage = () => {
       title,
       content,
       summary,
-      imageUrl,
-      lastModified: new Date().toISOString(), // Adiciona data de modificação
+      image: imageUrl,
+      published: isPublished,
     };
 
     try {
-      // Atualizar localmente
-      const existingPosts = JSON.parse(localStorage.getItem("blogPosts") || "[]");
-      const updatedPosts = existingPosts.map(p => p.id === postId ? updatedPostData : p);
-      localStorage.setItem("blogPosts", JSON.stringify(updatedPosts));
+      const updatedPost = await updatePost(postId, updatedPostData);
 
       toast({
         title: "Post Atualizado com Sucesso!",
-        description: "As alterações no post foram salvas localmente.",
+        description: updatedPost.message,
         className: "bg-primary text-primary-foreground toast-success",
       });
       navigate(`/admin/posts`);
@@ -87,8 +92,8 @@ const EditPostPage = () => {
   if (isLoading) {
     return (
       <div className="p-6 flex justify-center items-center min-h-[calc(100vh-200px)]">
-        <motion.div 
-          animate={{ rotate: 360 }} 
+        <motion.div
+          animate={{ rotate: 360 }}
           transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
           className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full"
         />
@@ -97,7 +102,12 @@ const EditPostPage = () => {
   }
 
   if (!originalPost) {
-    return <NotFoundPage message="Post não encontrado para edição." />;
+    /* toast({
+      title: "Post não encontrado",
+      description: "O post que você está tentando editar não existe.",
+      variant: "destructive",
+    });
+    navigate("/admin/posts"); */
   }
 
   return (
@@ -118,63 +128,92 @@ const EditPostPage = () => {
           </Link>
         </Button>
       </div>
-      
-      <form onSubmit={handleSubmit} className="bg-card p-6 sm:p-8 rounded-lg shadow-md border border-border space-y-6">
+
+      <form
+        onSubmit={handleSubmit}
+        className="bg-card p-6 sm:p-8 rounded-lg shadow-md border border-border space-y-6"
+      >
         <div>
-          <Label htmlFor="title" className="text-foreground/90">Título</Label>
-          <Input 
-            id="title" 
-            value={title} 
-            onChange={(e) => setTitle(e.target.value)} 
+          <Label htmlFor="title" className="text-foreground/90">
+            Título
+          </Label>
+          <Input
+            id="title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
             placeholder="Título do post"
             className="mt-1 border-input focus:border-ring focus:ring-ring bg-background placeholder:text-muted-foreground"
             required
           />
         </div>
         <div>
-          <Label htmlFor="summary" className="text-foreground/90">Resumo (Opcional)</Label>
-          <Textarea 
-            id="summary" 
-            value={summary} 
-            onChange={(e) => setSummary(e.target.value)} 
+          <Label htmlFor="summary" className="text-foreground/90">
+            Resumo (Opcional)
+          </Label>
+          <Textarea
+            id="summary"
+            value={summary}
+            onChange={(e) => setSummary(e.target.value)}
             placeholder="Um breve resumo do post..."
             className="mt-1 border-input focus:border-ring focus:ring-ring bg-background placeholder:text-muted-foreground"
             rows={3}
           />
         </div>
         <div>
-          <Label htmlFor="content" className="text-foreground/90">Conteúdo</Label>
-          <Textarea 
-            id="content" 
-            value={content} 
-            onChange={(e) => setContent(e.target.value)} 
+          <Label htmlFor="content" className="text-foreground/90">
+            Conteúdo
+          </Label>
+          <Textarea
+            id="content"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
             placeholder="Escreva o conteúdo do seu post aqui... (Use Markdown para formatação)"
             className="mt-1 border-input focus:border-ring focus:ring-ring bg-background placeholder:text-muted-foreground"
             rows={10}
             required
           />
-          <p className="text-xs text-muted-foreground mt-1">Você pode usar Markdown para formatação básica (e.g., **negrito**, *itálico*, # Título).</p>
+          <p className="text-xs text-muted-foreground mt-1">
+            Você pode usar Markdown para formatação básica (e.g., **negrito**,
+            *itálico*, # Título).
+          </p>
         </div>
         <div>
-          <Label htmlFor="imageUrl" className="text-foreground/90">URL da Imagem de Capa (Opcional)</Label>
-          <Input 
-            id="imageUrl" 
+          <Label htmlFor="imageUrl" className="text-foreground/90">
+            URL da Imagem de Capa (Opcional)
+          </Label>
+          <Input
+            id="imageUrl"
             type="url"
-            value={imageUrl} 
-            onChange={(e) => setImageUrl(e.target.value)} 
+            value={imageUrl}
+            onChange={(e) => setImageUrl(e.target.value)}
             placeholder="https://exemplo.com/imagem.jpg"
             className="mt-1 border-input focus:border-ring focus:ring-ring bg-background placeholder:text-muted-foreground"
           />
         </div>
-        <Button 
-          type="submit" 
+        <div
+          title="Liberar este post para leitores"
+          className="flex items-center space-x-2"
+        >
+          <Label htmlFor="published" className="text-foreground/90">
+            Visível no site?
+          </Label>
+          <SwitchButton
+            isOn={isPublished}
+            setIsOn={setIsPublished}
+            inputName="published"
+            checked='{isPublished && "checked"}'
+            toggleSwitch={(e) => setIsPublished(!isPublished)}
+          />
+        </div>
+        <Button
+          type="submit"
           disabled={isSubmitting}
           className="w-full bg-primary hover:bg-primary/90 text-primary-foreground disabled:opacity-70 disabled:cursor-not-allowed"
         >
           {isSubmitting ? (
             <>
-              <motion.div 
-                animate={{ rotate: 360 }} 
+              <motion.div
+                animate={{ rotate: 360 }}
                 transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                 className="w-5 h-5 border-2 border-primary-foreground border-t-transparent rounded-full mr-2"
               />
